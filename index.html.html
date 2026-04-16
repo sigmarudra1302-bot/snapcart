@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SnapCart India – Smart Deals. Fast Delivery.</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Nunito', sans-serif; color: #111; background: #fff; }
+
+  /* NAV */
+  nav { position: sticky; top: 0; z-index: 100; background: #fff; border-bottom: 1px solid #eee; padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .logo { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 800; color: #e44; letter-spacing: -0.5px; }
+  .logo span { color: #111; }
+  .nav-links { display: flex; gap: 24px; font-size: 14px; }
+  .nav-links a { text-decoration: none; color: #333; font-weight: 600; }
+  .nav-links a:hover { color: #e44; }
+  .cart-btn { background: #e44; color: #fff; border: none; padding: 8px 18px; border-radius: 20px; font-size: 14px; cursor: pointer; font-weight: 700; }
+  .cart-btn:hover { background: #c33; }
+
+  /* TIMER BAR */
+  .timer-bar { background: #111; color: #fff; text-align: center; padding: 10px; font-size: 14px; font-weight: 700; }
+  .timer-bar span { color: #ffd700; margin: 0 4px; font-size: 18px; font-weight: 900; }
+
+  /* HERO */
+  .hero { background: linear-gradient(135deg, #fff1f1 0%, #fff8f0 100%); padding: 60px 5% 50px; display: flex; align-items: center; justify-content: space-between; gap: 40px; }
+  .hero-text h1 { font-family: 'Poppins', sans-serif; font-size: clamp(28px, 4vw, 48px); font-weight: 800; line-height: 1.15; color: #111; max-width: 520px; }
+  .hero-text h1 span { color: #e44; }
+  .hero-text p { margin-top: 14px; font-size: 16px; color: #555; max-width: 420px; line-height: 1.6; }
+  .hero-btns { margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-primary { background: #e44; color: #fff; padding: 13px 30px; border-radius: 8px; font-size: 15px; font-weight: 800; text-decoration: none; border: none; cursor: pointer; transition: background 0.2s, transform 0.1s; display: inline-block; }
+  .btn-primary:hover { background: #c33; transform: translateY(-1px); }
+  .btn-secondary { background: #fff; color: #e44; padding: 13px 30px; border-radius: 8px; font-size: 15px; font-weight: 800; text-decoration: none; border: 2px solid #e44; cursor: pointer; display: inline-block; transition: all 0.15s; }
+  .btn-secondary:hover { background: #fff1f1; }
+  .hero-badges { margin-top: 22px; display: flex; gap: 16px; flex-wrap: wrap; }
+  .badge { font-size: 13px; color: #555; display: flex; align-items: center; gap: 5px; font-weight: 600; }
+  .hero-img { min-width: 220px; text-align: center; }
+  .hero-emoji { font-size: 120px; line-height: 1; animation: float 3s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+  /* TRUST STRIP */
+  .trust-strip { display: flex; justify-content: center; gap: 32px; padding: 18px 5%; background: #f9f9f9; flex-wrap: wrap; border-bottom: 1px solid #eee; }
+  .trust-item { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #444; }
+
+  /* SECTION */
+  section { padding: 50px 5%; }
+  .section-title { font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+  .section-sub { font-size: 14px; color: #777; margin-bottom: 28px; }
+
+  /* CATEGORIES */
+  .cat-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+  .cat-chip { border: 2px solid #eee; border-radius: 24px; padding: 8px 20px; font-size: 13px; font-weight: 700; color: #333; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.15s; background: #fff; }
+  .cat-chip:hover, .cat-chip.active { background: #e44; color: #fff; border-color: #e44; }
+
+  /* PRODUCT GRID */
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+  .product-card { border: 1px solid #eee; border-radius: 14px; overflow: hidden; background: #fff; transition: box-shadow 0.2s, transform 0.15s; cursor: pointer; position: relative; }
+  .product-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.1); transform: translateY(-4px); }
+  .badge-hot { position: absolute; top: 10px; left: 10px; background: #e44; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px; }
+  .badge-stock { position: absolute; top: 10px; right: 10px; background: #ff9100; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px; }
+  .product-thumb { background: #f5f5f7; height: 180px; display: flex; align-items: center; justify-content: center; font-size: 68px; }
+  .product-info { padding: 14px; }
+  .product-info h3 { font-size: 14px; font-weight: 800; color: #111; margin-bottom: 6px; }
+  .product-stars { font-size: 12px; color: #f5a623; margin-bottom: 6px; font-weight: 700; }
+  .product-stars span { color: #888; margin-left: 4px; font-weight: 400; }
+  .product-price { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .price-current { font-size: 18px; font-weight: 900; color: #e44; font-family: 'Poppins', sans-serif; }
+  .price-mrp { font-size: 13px; color: #aaa; text-decoration: line-through; }
+  .price-save { font-size: 11px; color: #0a8a0a; font-weight: 800; background: #e6f7e6; padding: 2px 6px; border-radius: 4px; }
+  .btn-add { margin-top: 12px; width: 100%; background: #e44; color: #fff; border: none; padding: 10px; border-radius: 7px; font-size: 13px; font-weight: 800; cursor: pointer; transition: background 0.15s; }
+  .btn-add:hover { background: #c33; }
+
+  /* WHY US */
+  .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+  .why-card { border: 1px solid #eee; border-radius: 14px; padding: 24px; text-align: center; transition: box-shadow 0.2s; }
+  .why-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+  .why-icon { font-size: 36px; margin-bottom: 12px; }
+  .why-card h4 { font-size: 15px; font-weight: 800; margin-bottom: 6px; }
+  .why-card p { font-size: 13px; color: #666; line-height: 1.5; }
+
+  /* REVIEWS */
+  .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+  .review-card { border: 1px solid #eee; border-radius: 12px; padding: 18px; background: #fff; transition: box-shadow 0.15s; }
+  .review-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .review-stars { color: #f5a623; font-size: 14px; margin-bottom: 6px; }
+  .review-text { font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 8px; font-style: italic; }
+  .reviewer { font-size: 12px; font-weight: 800; color: #888; }
+
+  /* MODAL BASE */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #fff; border-radius: 18px; padding: 28px; max-width: 440px; width: 100%; position: relative; max-height: 90vh; overflow-y: auto; }
+  .modal-close { position: absolute; top: 14px; right: 14px; background: #f0f0f0; border: none; font-size: 16px; cursor: pointer; color: #555; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .modal-close:hover { background: #e0e0e0; }
+  .modal h2 { font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .modal-price { font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 900; color: #e44; margin: 10px 0 4px; }
+  .modal-mrp { font-size: 14px; color: #aaa; text-decoration: line-through; margin-bottom: 12px; }
+  .modal-feat { font-size: 13px; color: #444; line-height: 1.9; margin-bottom: 16px; }
+  .modal-stars { color: #f5a623; font-size: 15px; margin-bottom: 6px; }
+  .modal-reviews { margin-top: 14px; }
+  .modal-review { border-top: 1px solid #f0f0f0; padding: 10px 0; font-size: 12px; color: #555; line-height: 1.5; }
+  .modal-btns { display: flex; gap: 10px; margin-top: 18px; }
+  .modal-btns button { flex: 1; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 800; cursor: pointer; border: none; }
+  .btn-cart-modal { background: #f5f5f7; color: #111; }
+  .btn-cart-modal:hover { background: #eee; }
+  .btn-buy-modal { background: #e44; color: #fff; }
+  .btn-buy-modal:hover { background: #c33; }
+  .stock-warn { background: #fff4e0; border: 1px solid #ffc966; border-radius: 8px; padding: 8px 12px; font-size: 12px; font-weight: 800; color: #b86000; margin-bottom: 12px; }
+
+  /* CHECKOUT */
+  .checkout-form label { display: block; font-size: 13px; font-weight: 700; color: #555; margin: 12px 0 4px; }
+  .checkout-form input, .checkout-form select, .checkout-form textarea { width: 100%; border: 1.5px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 14px; outline: none; font-family: 'Nunito', sans-serif; transition: border-color 0.15s; }
+  .checkout-form input:focus, .checkout-form select:focus, .checkout-form textarea:focus { border-color: #e44; }
+  .pay-opts { display: flex; gap: 10px; margin-top: 6px; }
+  .pay-opt { flex: 1; border: 2px solid #eee; border-radius: 10px; padding: 12px 8px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 700; transition: all 0.15s; }
+  .pay-opt:hover { border-color: #e44; }
+  .pay-opt.selected { border-color: #e44; background: #fff1f1; color: #e44; }
+  .pay-opt .pay-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+
+  /* POLICIES */
+  .policy-grid { display: flex; gap: 20px; flex-wrap: wrap; }
+  .policy-card { flex: 1; min-width: 200px; background: #f9f9f9; border-radius: 12px; padding: 20px; }
+  .policy-card h4 { font-size: 14px; font-weight: 800; margin-bottom: 8px; }
+  .policy-card p { font-size: 13px; color: #666; line-height: 1.6; }
+
+  /* CONTACT */
+  .contact-section { background: linear-gradient(135deg, #fff1f1, #fff8f0); text-align: center; border-radius: 18px; margin: 0 5%; padding: 50px 5%; }
+
+  /* FOOTER */
+  footer { background: #111; color: #ccc; padding: 44px 5% 24px; margin-top: 50px; }
+  .footer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 28px; margin-bottom: 28px; }
+  .footer-col h5 { color: #fff; font-size: 14px; font-weight: 800; margin-bottom: 12px; letter-spacing: 0.3px; }
+  .footer-col a { display: block; font-size: 13px; color: #aaa; text-decoration: none; margin-bottom: 7px; transition: color 0.15s; }
+  .footer-col a:hover { color: #fff; }
+  .footer-col p { font-size: 13px; color: #888; line-height: 1.6; }
+  .footer-bottom { border-top: 1px solid #333; padding-top: 16px; font-size: 12px; color: #666; text-align: center; }
+
+  /* WHATSAPP */
+  .wa-btn { position: fixed; bottom: 24px; right: 24px; background: #25d366; color: #fff; border: none; border-radius: 50%; width: 58px; height: 58px; font-size: 26px; cursor: pointer; box-shadow: 0 4px 16px rgba(37,211,102,0.4); z-index: 999; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 0.2s; }
+  .wa-btn:hover { transform: scale(1.1); }
+
+  /* SUCCESS */
+  .success-content { text-align: center; }
+  .success-content h2 { font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 10px; }
+  .success-content p { font-size: 14px; color: #555; line-height: 1.7; }
+
+  @media (max-width: 600px) {
+    .hero { flex-direction: column; text-align: center; padding: 40px 5%; }
+    .hero-btns, .hero-badges { justify-content: center; }
+    .nav-links { display: none; }
+    .hero-emoji { font-size: 80px; }
+    .trust-strip { gap: 16px; }
+    .modal { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Snap<span>Cart</span> 🛒</div>
+  <div class="nav-links">
+    <a href="#products">Products</a>
+    <a href="#why">Why Us</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <button class="cart-btn" onclick="openCheckout()">🛒 Cart (<span id="cartCount">0</span>)</button>
+</nav>
+
+<!-- FLASH SALE TIMER -->
+<div class="timer-bar">
+  ⚡ Flash Sale Ends In: <span id="th">04</span>h <span id="tm">27</span>m <span id="ts">33</span>s — Don't miss out!
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-text">
+    <h1>Trending Gadgets at <span>Lowest Prices 🔥</span></h1>
+    <p>Smart Deals. Fast Delivery. Genuine products shipped across India at unbeatable prices.</p>
+    <div class="hero-btns">
+      <a href="#products" class="btn-primary">Shop Now →</a>
+      <a href="#why" class="btn-secondary">Why SnapCart?</a>
+    </div>
+    <div class="hero-badges">
+      <span class="badge">📦 Cash on Delivery</span>
+      <span class="badge">🚚 Fast Shipping</span>
+      <span class="badge">✅ Trusted Store</span>
+    </div>
+  </div>
+  <div class="hero-img">
+    <div class="hero-emoji">🎧</div>
+    <p style="font-size:13px;color:#e44;font-weight:800;margin-top:10px;">Best Seller This Week</p>
+  </div>
+</div>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="trust-item">📦 Free Shipping over ₹999</div>
+  <div class="trust-item">🔄 7-Day Easy Returns</div>
+  <div class="trust-item">💳 COD Available</div>
+  <div class="trust-item">⭐ 4.8★ Customer Rating</div>
+  <div class="trust-item">🔒 Secure Payments</div>
+</div>
+
+<!-- CATEGORIES -->
+<section>
+  <div class="section-title">Shop by Category</div>
+  <div class="section-sub">Find exactly what you need</div>
+  <div class="cat-grid">
+    <div class="cat-chip active" onclick="filterCat(this,'all')">🛍️ All Products</div>
+    <div class="cat-chip" onclick="filterCat(this,'audio')">🎧 Audio</div>
+    <div class="cat-chip" onclick="filterCat(this,'charging')">⚡ Charging</div>
+    <div class="cat-chip" onclick="filterCat(this,'accessories')">📱 Phone Accessories</div>
+    <div class="cat-chip" onclick="filterCat(this,'wearables')">⌚ Wearables</div>
+    <div class="cat-chip" onclick="filterCat(this,'power')">🔋 Power</div>
+    <div class="cat-chip" onclick="filterCat(this,'speakers')">🔊 Speakers</div>
+    <div class="cat-chip" onclick="filterCat(this,'lights')">💡 LED Lights</div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="products" style="padding-top:0;">
+  <div class="section-title">🔥 Featured Products</div>
+  <div class="section-sub">Handpicked deals — lowest prices guaranteed</div>
+  <div class="product-grid" id="productGrid"></div>
+</section>
+
+<!-- WHY US -->
+<section id="why" style="background:#f9f9f9;">
+  <div class="section-title">Why Choose SnapCart India?</div>
+  <div class="section-sub">We make shopping easy, fast, and trustworthy</div>
+  <div class="why-grid">
+    <div class="why-card"><div class="why-icon">💵</div><h4>Cash on Delivery</h4><p>Pay when you receive. No upfront risk, no trust issues.</p></div>
+    <div class="why-card"><div class="why-icon">🚚</div><h4>Fast Shipping</h4><p>Orders dispatched within 24 hours. Pan-India delivery in 3–7 days.</p></div>
+    <div class="why-card"><div class="why-icon">✅</div><h4>Genuine Products</h4><p>100% authentic gadgets sourced from trusted verified suppliers.</p></div>
+    <div class="why-card"><div class="why-icon">🔄</div><h4>Easy Returns</h4><p>Not happy? Return within 7 days. Full refund, no questions asked.</p></div>
+    <div class="why-card"><div class="why-icon">💬</div><h4>WhatsApp Support</h4><p>Real humans on WhatsApp ready to help you anytime, 24/7.</p></div>
+    <div class="why-card"><div class="why-icon">🔒</div><h4>Secure Checkout</h4><p>COD and UPI payments — safe, simple, and instant.</p></div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews">
+  <div class="section-title">⭐ What Our Customers Say</div>
+  <div class="section-sub">Thousands of happy shoppers across India</div>
+  <div class="reviews-grid" id="reviewsGrid"></div>
+</section>
+
+<!-- CONTACT -->
+<div class="contact-section" id="contact">
+  <div class="section-title">Got Questions? We're Here!</div>
+  <div class="section-sub">Reach out anytime — we respond within minutes</div>
+  <p style="font-size:14px;color:#555;margin-bottom:20px;">📧 snapcartindia@gmail.com</p>
+  <a href="https://wa.me/91XXXXXXXXXX?text=Hi%20SnapCart%20India!%20I%20have%20a%20question." target="_blank" style="display:inline-flex;align-items:center;gap:10px;background:#25d366;color:#fff;padding:14px 30px;border-radius:10px;font-size:15px;font-weight:800;text-decoration:none;">
+    💬 Chat on WhatsApp
+  </a>
+</div>
+
+<!-- POLICIES -->
+<section>
+  <div class="section-title">Our Policies</div>
+  <div class="section-sub">Transparent, fair, and customer-first</div>
+  <div class="policy-grid">
+    <div class="policy-card">
+      <h4>🚚 Shipping Policy</h4>
+      <p>Orders dispatched within 24 hours. Delivery in 3–7 business days. Free shipping on orders above ₹999. Tracking link sent via WhatsApp/SMS.</p>
+    </div>
+    <div class="policy-card">
+      <h4>🔄 Return Policy</h4>
+      <p>7-day hassle-free returns. Product must be unused in original packaging. Refund processed within 5 business days to your original payment method.</p>
+    </div>
+    <div class="policy-card">
+      <h4>🔒 Privacy Policy</h4>
+      <p>Your personal data is 100% safe with us. We never sell or share your information with any third party. All data encrypted and secured.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <div style="font-family:'Poppins',sans-serif;font-size:18px;font-weight:800;color:#e44;margin-bottom:10px;">SnapCart India 🛒</div>
+      <p>Smart Deals. Fast Delivery.<br>Your trusted gadget store.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Products</h5>
+      <a href="#">Wireless Earbuds</a>
+      <a href="#">Fast Charger</a>
+      <a href="#">iPhone Covers</a>
+      <a href="#">Smart Watch</a>
+      <a href="#">Power Bank</a>
+      <a href="#">Bluetooth Speaker</a>
+    </div>
+    <div class="footer-col">
+      <h5>Customer Help</h5>
+      <a href="#">Track My Order</a>
+      <a href="#">Returns & Refunds</a>
+      <a href="#">FAQ</a>
+      <a href="#">Contact Us</a>
+      <a href="https://wa.me/91XXXXXXXXXX">WhatsApp Support</a>
+    </div>
+    <div class="footer-col">
+      <h5>Legal</h5>
+      <a href="#">Shipping Policy</a>
+      <a href="#">Return Policy</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2025 SnapCart India. All rights reserved. | snapcartindia@gmail.com</div>
+</footer>
+
+<!-- FLOATING WHATSAPP -->
+<a href="https://wa.me/91XXXXXXXXXX?text=Hi%20SnapCart%20India!" target="_blank" class="wa-btn" title="Chat on WhatsApp">💬</a>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeProductModal()">✕</button>
+    <div style="font-size:72px;text-align:center;margin-bottom:12px;" id="modalEmoji"></div>
+    <div class="modal-stars">★★★★★</div>
+    <h2 id="modalTitle"></h2>
+    <div class="modal-price" id="modalPrice"></div>
+    <div class="modal-mrp" id="modalMRP"></div>
+    <div class="stock-warn">⚠️ Only 3 items left in stock! Order now.</div>
+    <div class="modal-feat" id="modalFeatures"></div>
+    <div class="modal-reviews" id="modalReviews"></div>
+    <div class="modal-btns">
+      <button class="btn-cart-modal" onclick="addToCart(); closeProductModal()">🛒 Add to Cart</button>
+      <button class="btn-buy-modal" onclick="closeProductModal(); openCheckout()">Buy Now →</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="checkoutModal">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('checkoutModal').classList.remove('open')">✕</button>
+    <h2>🛒 Place Your Order</h2>
+    <p style="font-size:13px;color:#888;margin-top:4px;margin-bottom:16px;">Fast and secure. COD available.</p>
+    <div class="checkout-form">
+      <label>Full Name *</label>
+      <input type="text" id="co-name" placeholder="Your full name" />
+      <label>Phone Number *</label>
+      <input type="tel" id="co-phone" placeholder="10-digit mobile number" maxlength="10" />
+      <label>Delivery Address *</label>
+      <textarea id="co-address" rows="3" placeholder="House no., Street, Area, City, State, PIN Code" style="width:100%;border:1.5px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;resize:none;outline:none;font-family:'Nunito',sans-serif;"></textarea>
+      <label>Payment Method *</label>
+      <div class="pay-opts">
+        <div class="pay-opt selected" onclick="selectPay(this)"><span class="pay-icon">💵</span>Cash on Delivery</div>
+        <div class="pay-opt" onclick="selectPay(this)"><span class="pay-icon">📲</span>UPI Payment</div>
+      </div>
+      <div id="upiInfo" style="display:none;margin-top:10px;background:#f0f8ff;border-radius:8px;padding:12px;font-size:13px;color:#555;">
+        UPI ID: <strong>snapcartindia@upi</strong><br>After payment, share screenshot on WhatsApp for order confirmation.
+      </div>
+      <button class="btn-primary" style="width:100%;margin-top:20px;font-size:15px;padding:14px;" onclick="placeOrder()">✅ Place Order Now →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER SUCCESS MODAL -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal">
+    <div class="success-content">
+      <div style="font-size:64px;margin-bottom:16px;">🎉</div>
+      <h2>Order Placed Successfully!</h2>
+      <p style="margin-top:10px;">Thank you for shopping with <strong>SnapCart India</strong>! You'll receive a WhatsApp confirmation shortly with your order details and tracking link.</p>
+      <div style="background:#e6f7e6;border-radius:10px;padding:14px;margin:18px 0;font-size:13px;color:#1a6e1a;font-weight:700;">
+        ✅ Your order is confirmed.<br>🚚 Expected delivery: 3–7 business days.
+      </div>
+      <button class="btn-primary" style="font-size:15px;" onclick="document.getElementById('successModal').classList.remove('open')">Continue Shopping</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const products = [
+  { id:1, cat:'audio', emoji:'🎧', name:'Wireless Earbuds', price:799, mrp:1499, stars:'★★★★★', reviews:248, badge:'Best Seller 🔥', stock:true,
+    features:'• High-quality HD sound\n• 24hr total battery life\n• Comfortable ergonomic fit\n• Fast charging (10 min = 1hr play)\n• Works with iOS & Android\n• IPX4 sweat resistant',
+    pReviews:['Amazing sound quality! Battery lasts all day. — Ravi K., Mumbai ★★★★★','Best earbuds under ₹1000, no doubt! — Priya S., Delhi ★★★★★','Fast delivery, product exactly as shown. Great quality! — Karan M., Surat ★★★★★'] },
+  { id:2, cat:'charging', emoji:'⚡', name:'Fast Charger 65W', price:499, mrp:999, stars:'★★★★½', reviews:134, badge:null, stock:true,
+    features:'• 65W super fast charging\n• Safe multi-layer protection\n• Compatible with all phones\n• Overcharge & overheat protection\n• 1.5m braided cable included',
+    pReviews:['Charges my phone from 0 to 80% in 30 mins! — Anita D., Pune ★★★★★','Very durable, been using for 6 months, works perfectly. — Suresh R., Hyderabad ★★★★'] },
+  { id:3, cat:'accessories', emoji:'📱', name:'iPhone Covers (Premium)', price:299, mrp:599, stars:'★★★★★', reviews:89, badge:'New 🆕', stock:false,
+    features:'• Stylish designer patterns\n• Military-grade shockproof\n• Precise cutouts for all buttons\n• Slim & lightweight design\n• Available for iPhone 13/14/15 Pro',
+    pReviews:['Super premium look for such a low price! — Neha T., Bengaluru ★★★★★','Fits perfectly, very sturdy. Dropped it twice, no damage. — Amit J., Chennai ★★★★★'] },
+  { id:4, cat:'wearables', emoji:'⌚', name:'Smart Watch (Budget)', price:1499, mrp:2999, stars:'★★★★★', reviews:312, badge:'Best Value 💎', stock:true,
+    features:'• Fitness & step tracking\n• Real-time heart rate monitor\n• Sleep quality tracking\n• Call & message notifications\n• 7-day battery life\n• Water resistant IP67',
+    pReviews:['Feels like a ₹5000 watch! Crazy value. — Rohit P., Jaipur ★★★★★','Great for gym & daily use. Very accurate step count. — Meera V., Kolkata ★★★★★','Fast delivery from SnapCart! Already ordered again! — Dev S., Ahmedabad ★★★★★'] },
+  { id:5, cat:'power', emoji:'🔋', name:'Power Bank 20000mAh', price:999, mrp:1799, stars:'★★★★½', reviews:67, badge:null, stock:true,
+    features:'• 20000mAh massive capacity\n• Charge 3 devices simultaneously\n• 22.5W fast charging output\n• LED battery indicator\n• Compact & travel-friendly\n• Airline approved',
+    pReviews:['Charges my phone 4 times! Insane value. — Vijay N., Nagpur ★★★★★','Perfect for travel. Very compact for the capacity. — Pooja L., Lucknow ★★★★'] },
+  { id:6, cat:'speakers', emoji:'🔊', name:'Bluetooth Speaker', price:799, mrp:1599, stars:'★★★★★', reviews:45, badge:null, stock:true,
+    features:'• 360° rich surround sound\n• 12hr continuous playtime\n• IPX5 waterproof\n• Built-in mic for hands-free calls\n• Bluetooth 5.0 instant pairing\n• USB-C fast charging',
+    pReviews:['Sound quality is insane for this price! — Pooja L., Lucknow ★★★★★','Using it at parties, everyone asks where I bought it! — Arjun B., Thane ★★★★★'] },
+  { id:7, cat:'lights', emoji:'💡', name:'LED Strip Lights (5m)', price:399, mrp:799, stars:'★★★★½', reviews:33, badge:null, stock:true,
+    features:'• 5 meters RGB LED strip\n• 16 million color options\n• App controlled + remote\n• Music sync mode\n• Easy self-adhesive install\n• USB powered',
+    pReviews:['My room looks like a gaming setup now! — Varun G., Bhopal ★★★★★'] },
+];
+
+let cartCount = 0;
+
+function renderProducts(filter='all') {
+  const grid = document.getElementById('productGrid');
+  const filtered = filter === 'all' ? products : products.filter(p => p.cat === filter);
+  grid.innerHTML = filtered.map(p => `
+    <div class="product-card" onclick="openProduct(${p.id})">
+      ${p.badge ? `<div class="badge-hot">${p.badge}</div>` : ''}
+      ${!p.stock ? `<div class="badge-stock">Low Stock!</div>` : ''}
+      <div class="product-thumb">${p.emoji}</div>
+      <div class="product-info">
+        <h3>${p.name}</h3>
+        <div class="product-stars">${p.stars} <span>(${p.reviews} reviews)</span></div>
+        <div class="product-price">
+          <span class="price-current">₹${p.price}</span>
+          <span class="price-mrp">₹${p.mrp}</span>
+          <span class="price-save">${Math.round((p.mrp-p.price)/p.mrp*100)}% off</span>
+        </div>
+        <button class="btn-add" onclick="event.stopPropagation();addToCart()">🛒 Add to Cart</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterCat(el, cat) {
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderProducts(cat);
+}
+
+function openProduct(id) {
+  const p = products.find(x => x.id === id);
+  document.getElementById('modalEmoji').textContent = p.emoji;
+  document.getElementById('modalTitle').textContent = p.name;
+  document.getElementById('modalPrice').textContent = '₹' + p.price;
+  document.getElementById('modalMRP').textContent = 'MRP ₹' + p.mrp + '  (' + Math.round((p.mrp-p.price)/p.mrp*100) + '% off)';
+  document.getElementById('modalFeatures').innerHTML = p.features.replace(/\n/g,'<br>');
+  document.getElementById('modalReviews').innerHTML = '<div style="font-size:13px;font-weight:800;margin-bottom:4px;color:#333;">Customer Reviews</div>' +
+    p.pReviews.map(r => `<div class="modal-review">⭐ ${r}</div>`).join('');
+  document.getElementById('productModal').classList.add('open');
+}
+
+function closeProductModal() { document.getElementById('productModal').classList.remove('open'); }
+
+function openCheckout() { document.getElementById('checkoutModal').classList.add('open'); }
+
+function addToCart() {
+  cartCount++;
+  document.getElementById('cartCount').textContent = cartCount;
+}
+
+function selectPay(el) {
+  document.querySelectorAll('.pay-opt').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  const isUPI = el.querySelector('.pay-icon').textContent === '📲';
+  document.getElementById('upiInfo').style.display = isUPI ? 'block' : 'none';
+}
+
+function placeOrder() {
+  const name = document.getElementById('co-name').value.trim();
+  const phone = document.getElementById('co-phone').value.trim();
+  const addr = document.getElementById('co-address').value.trim();
+  if(!name || !phone || !addr) { alert('Please fill in all required fields.'); return; }
+  if(phone.length !== 10 || isNaN(phone)) { alert('Please enter a valid 10-digit phone number.'); return; }
+  document.getElementById('checkoutModal').classList.remove('open');
+  document.getElementById('successModal').classList.add('open');
+  cartCount = 0;
+  document.getElementById('cartCount').textContent = '0';
+}
+
+// Countdown timer
+function startTimer() {
+  let total = 4*3600 + 27*60 + 33;
+  const th = document.getElementById('th');
+  const tm = document.getElementById('tm');
+  const ts = document.getElementById('ts');
+  setInterval(() => {
+    if(total <= 0) { total = 23*3600; return; }
+    total--;
+    th.textContent = String(Math.floor(total/3600)).padStart(2,'0');
+    tm.textContent = String(Math.floor((total%3600)/60)).padStart(2,'0');
+    ts.textContent = String(total%60).padStart(2,'0');
+  }, 1000);
+}
+
+// Reviews
+const globalReviews = [
+  { text:'Ordered earbuds, arrived in 2 days. Sound quality is outstanding for the price!', name:'Rajesh K., Mumbai', stars:'★★★★★' },
+  { text:'COD option is so convenient. No need to pay online. Very trustworthy store.', name:'Sunita D., Delhi', stars:'★★★★★' },
+  { text:'Smart watch is amazing at ₹1499. Feels super premium. Will definitely order again!', name:'Vikram S., Bengaluru', stars:'★★★★★' },
+  { text:'Fast charger works perfectly on my OnePlus 12. Charges insanely quick!', name:'Deepa M., Hyderabad', stars:'★★★★½' },
+  { text:'Packaging was excellent, product exactly as described. 100% genuine quality.', name:'Arun T., Pune', stars:'★★★★★' },
+  { text:'WhatsApp support is very responsive. Helped me track my order in seconds.', name:'Kavya R., Surat', stars:'★★★★★' },
+];
+
+document.getElementById('reviewsGrid').innerHTML = globalReviews.map(r => `
+  <div class="review-card">
+    <div class="review-stars">${r.stars}</div>
+    <div class="review-text">"${r.text}"</div>
+    <div class="reviewer">— ${r.name}</div>
+  </div>
+`).join('');
+
+renderProducts();
+startTimer();
+</script>
+</body>
+</html>
